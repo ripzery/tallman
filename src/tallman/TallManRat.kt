@@ -29,8 +29,6 @@ class TallManRat private constructor(
                 SpeakOptions.ALL_ROUTE -> {
                     allPossiblePaths.forEach { it.speakPathTraced() }
                 }
-                SpeakOptions.NONE -> {
-                }
             }
             true
         } else {
