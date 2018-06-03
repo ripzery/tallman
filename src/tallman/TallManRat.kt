@@ -15,34 +15,34 @@ class TallManRat private constructor(
         val currentPath = historyPath[index]
         return when {
             currentPath == food.toPathCounter() -> {
-                speakPathTraced(historyPath)
+                historyPath.speakPathTraced()
                 true
             }
             index < historyPath.size -> {
                 val nextIndex = index + 1
 
-                return isPossiblePath(historyPath, currentPath.left())
+                return historyPath.isPossiblePath(currentPath.left())
                     && findFood(nextIndex, historyPath.cloneInsert(currentPath.left()))
-                    || isPossiblePath(historyPath, currentPath.right())
+                    || historyPath.isPossiblePath(currentPath.right())
                     && findFood(nextIndex, historyPath.cloneInsert(currentPath.right()))
-                    || isPossiblePath(historyPath, currentPath.top())
+                    || historyPath.isPossiblePath(currentPath.top())
                     && findFood(nextIndex, historyPath.cloneInsert(currentPath.top()))
-                    || isPossiblePath(historyPath, currentPath.bottom())
+                    || historyPath.isPossiblePath(currentPath.bottom())
                     && findFood(nextIndex, historyPath.cloneInsert(currentPath.bottom()))
             }
             else -> false
         }
     }
 
-    override fun speakPathTraced(historyPath: MutableList<PathCounter>) {
-        println(historyPath.joinToString(" -> "))
-        println("Total steps: ${historyPath.last().counter}")
+    override fun MutableList<PathCounter>.speakPathTraced() {
+        println(this.joinToString(" -> "))
+        println("Total steps: ${this.last().counter}")
     }
 
-    override fun isPossiblePath(historyPath: MutableList<PathCounter>, path: PathCounter): Boolean {
+    override fun MutableList<PathCounter>.isPossiblePath(path: PathCounter): Boolean {
         val notWall: (PathCounter) -> Boolean = { map[it.x][it.y] != 1 }
         val inBound: (PathCounter) -> Boolean = { it.x >= 0 && it.y >= 0 && it.x < map.size && it.y < map[it.x].size }
-        val unique: (PathCounter) -> Boolean = { !historyPath.contains(it) }
+        val unique: (PathCounter) -> Boolean = { !this.contains(it) }
 
         return inBound(path) && notWall(path) && unique(path)
     }
