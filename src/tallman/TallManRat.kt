@@ -11,12 +11,37 @@ class TallManRat private constructor(
     override val position: Pair<Int, Int>
 ) : SmartRat, ExperimentalRat {
 
+    override val allPossiblePaths: MutableList<MutableList<PathCounter>> = mutableListOf()
+
+    /**
+     * Rat will use its super brain power to think about all possible paths to reach to food.
+     *
+     * @return true if it found at least 1 way, otherwise false.
+     */
+    override fun think(option: RouteOptions): Boolean {
+        findFood()
+        return if (allPossiblePaths.isNotEmpty()) {
+            when (option) {
+                RouteOptions.BEST_ROUTE -> {
+                    allPossiblePaths.sortBy { it.last().counter }
+                    allPossiblePaths[0].speakPathTraced()
+                }
+                RouteOptions.ALL_ROUTE -> {
+                    allPossiblePaths.forEach { it.speakPathTraced() }
+                }
+            }
+            true
+        } else {
+            false
+        }
+    }
+
     override fun findFood(index: Int, historyPath: MutableList<PathCounter>): Boolean {
         val currentPath = historyPath[index]
         return when {
             currentPath == food.toPathCounter() -> {
-                historyPath.speakPathTraced()
-                true
+                allPossiblePaths.add(historyPath)
+                false
             }
             index < historyPath.size -> {
                 val nextIndex = index + 1
@@ -30,7 +55,9 @@ class TallManRat private constructor(
                     || historyPath.isPossiblePath(currentPath.bottom())
                     && findFood(nextIndex, historyPath.cloneInsert(currentPath.bottom()))
             }
-            else -> false
+            else -> {
+                throw IllegalStateException("Should not be here!!")
+            }
         }
     }
 
