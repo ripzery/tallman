@@ -13,5 +13,5 @@ private val map1: Array<IntArray> = arrayOf(
 
 fun main(whatever: Array<String>) {
     val rat = TallManRat.throwInMaze(map = map1, food = 1 to 0, position = 0 to 0)
-    println(rat.think(RouteOptions.ALL_ROUTE))
+    println(rat.think(SpeakOptions.BEST_ROUTE))
 }

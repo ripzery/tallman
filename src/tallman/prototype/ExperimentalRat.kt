@@ -1,7 +1,7 @@
 package tallman.prototype
 
-import tallman.RouteOptions
+import tallman.SpeakOptions
 
 interface ExperimentalRat {
-    fun think(option: RouteOptions): Boolean
+    fun think(option: SpeakOptions): Boolean
 }

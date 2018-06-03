@@ -18,16 +18,18 @@ class TallManRat private constructor(
      *
      * @return true if it found at least 1 way, otherwise false.
      */
-    override fun think(option: RouteOptions): Boolean {
+    override fun think(option: SpeakOptions): Boolean {
         findFood()
         return if (allPossiblePaths.isNotEmpty()) {
+            allPossiblePaths.sortBy { it.last().counter }
             when (option) {
-                RouteOptions.BEST_ROUTE -> {
-                    allPossiblePaths.sortBy { it.last().counter }
+                SpeakOptions.BEST_ROUTE -> {
                     allPossiblePaths[0].speakPathTraced()
                 }
-                RouteOptions.ALL_ROUTE -> {
+                SpeakOptions.ALL_ROUTE -> {
                     allPossiblePaths.forEach { it.speakPathTraced() }
+                }
+                SpeakOptions.NONE -> {
                 }
             }
             true
@@ -36,12 +38,12 @@ class TallManRat private constructor(
         }
     }
 
-    override fun findFood(index: Int, historyPath: MutableList<PathCounter>): Boolean {
+    override fun findFood(index: Int, historyPath: MutableList<PathCounter>, options: SpeakOptions): Boolean {
         val currentPath = historyPath[index]
         return when {
             currentPath == food.toPathCounter() -> {
                 allPossiblePaths.add(historyPath)
-                false
+                options == SpeakOptions.BEST_ROUTE
             }
             index < historyPath.size -> {
                 val nextIndex = index + 1
