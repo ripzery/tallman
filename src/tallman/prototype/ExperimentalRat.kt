@@ -1,10 +1,10 @@
 package tallman.prototype
 
-import tallman.data.CoordinateCounter
-import tallman.data.toCoordinateCounter
+import tallman.data.PathCounter
+import tallman.data.toPathCounter
 
 interface ExperimentalRat {
     val position: Pair<Int, Int>
-    fun findFood(index: Int = 0, memoryPath: MutableList<CoordinateCounter> =
-        mutableListOf(position.toCoordinateCounter())): Boolean
+    fun findFood(index: Int = 0, historyPath: MutableList<PathCounter> =
+        mutableListOf(position.toPathCounter())): Boolean
 }

@@ -1,7 +1,7 @@
 package tallman
 
-import tallman.data.CoordinateCounter
-import tallman.data.toCoordinateCounter
+import tallman.data.PathCounter
+import tallman.data.toPathCounter
 import tallman.prototype.ExperimentalRat
 import tallman.prototype.SmartRat
 
@@ -11,48 +11,48 @@ class TallManRat private constructor(
     override val position: Pair<Int, Int>
 ) : SmartRat, ExperimentalRat {
 
-    override fun findFood(index: Int, memoryPath: MutableList<CoordinateCounter>): Boolean {
-        val currentPath = memoryPath[index]
+    override fun findFood(index: Int, historyPath: MutableList<PathCounter>): Boolean {
+        val currentPath = historyPath[index]
         return when {
-            currentPath == food.toCoordinateCounter() -> {
-                speakPathTraced(memoryPath)
+            currentPath == food.toPathCounter() -> {
+                speakPathTraced(historyPath)
                 true
             }
-            index < memoryPath.size -> {
+            index < historyPath.size -> {
                 val nextIndex = index + 1
-                
-                return isPossiblePath(memoryPath, currentPath.left())
-                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.left()))
-                    || isPossiblePath(memoryPath, currentPath.right())
-                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.right()))
-                    || isPossiblePath(memoryPath, currentPath.top())
-                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.top()))
-                    || isPossiblePath(memoryPath, currentPath.bottom())
-                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.bottom()))
+
+                return isPossiblePath(historyPath, currentPath.left())
+                    && findFood(nextIndex, historyPath.cloneInsert(currentPath.left()))
+                    || isPossiblePath(historyPath, currentPath.right())
+                    && findFood(nextIndex, historyPath.cloneInsert(currentPath.right()))
+                    || isPossiblePath(historyPath, currentPath.top())
+                    && findFood(nextIndex, historyPath.cloneInsert(currentPath.top()))
+                    || isPossiblePath(historyPath, currentPath.bottom())
+                    && findFood(nextIndex, historyPath.cloneInsert(currentPath.bottom()))
             }
             else -> false
         }
     }
 
-    override fun speakPathTraced(passedPath: MutableList<CoordinateCounter>) {
-        println(passedPath.joinToString(" -> "))
-        println("Total steps: ${passedPath.last().counter}")
+    override fun speakPathTraced(historyPath: MutableList<PathCounter>) {
+        println(historyPath.joinToString(" -> "))
+        println("Total steps: ${historyPath.last().counter}")
     }
 
-    override fun isPossiblePath(memoryPath: MutableList<CoordinateCounter>, path: CoordinateCounter): Boolean {
-        val notWall: (CoordinateCounter) -> Boolean = { map[it.x][it.y] != 1 }
-        val inBound: (CoordinateCounter) -> Boolean = { it.x >= 0 && it.y >= 0 && it.x < map.size && it.y < map[it.x].size }
-        val unique: (CoordinateCounter) -> Boolean = { !memoryPath.contains(it) }
+    override fun isPossiblePath(historyPath: MutableList<PathCounter>, path: PathCounter): Boolean {
+        val notWall: (PathCounter) -> Boolean = { map[it.x][it.y] != 1 }
+        val inBound: (PathCounter) -> Boolean = { it.x >= 0 && it.y >= 0 && it.x < map.size && it.y < map[it.x].size }
+        val unique: (PathCounter) -> Boolean = { !historyPath.contains(it) }
 
         return inBound(path) && notWall(path) && unique(path)
     }
 
-    private fun MutableList<CoordinateCounter>.cloneInsert(
-        coordinateCounter: CoordinateCounter
-    ): MutableList<CoordinateCounter> {
-        return mutableListOf<CoordinateCounter>().apply {
+    private fun MutableList<PathCounter>.cloneInsert(
+        pathCounter: PathCounter
+    ): MutableList<PathCounter> {
+        return mutableListOf<PathCounter>().apply {
             addAll(this@cloneInsert)
-            add(coordinateCounter)
+            add(pathCounter)
         }
     }
 
