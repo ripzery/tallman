@@ -21,6 +21,4 @@ data class CoordinateCounter(val x: Int, val y: Int, val counter: Int) {
     override fun toString(): String = "($x, $y)"
 }
 
-fun Pair<Int, Int>.toCoordinateCounter(): CoordinateCounter {
-    return CoordinateCounter(this.first, this.second, 0)
-}
+fun Pair<Int, Int>.toCoordinateCounter(): CoordinateCounter = CoordinateCounter(this.first, this.second, 0)

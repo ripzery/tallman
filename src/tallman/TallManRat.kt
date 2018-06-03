@@ -12,39 +12,39 @@ class TallManRat private constructor(
 ) : SmartRat, ExperimentalRat {
 
     override fun findFood(index: Int, memoryPath: MutableList<CoordinateCounter>): Boolean {
+        val currentPath = memoryPath[index]
         return when {
-            memoryPath[index] == food.toCoordinateCounter() -> {
-                speakPassedPath(memoryPath)
+            currentPath == food.toCoordinateCounter() -> {
+                speakPathTraced(memoryPath)
                 true
             }
             index < memoryPath.size -> {
-                val path = memoryPath[index]
                 val nextIndex = index + 1
-
-                return isPossiblePath(memoryPath, path.left())
-                    && findFood(nextIndex, memoryPath.cloneInsert(path.left()))
-                    || isPossiblePath(memoryPath, path.right())
-                    && findFood(nextIndex, memoryPath.cloneInsert(path.right()))
-                    || isPossiblePath(memoryPath, path.top())
-                    && findFood(nextIndex, memoryPath.cloneInsert(path.top()))
-                    || isPossiblePath(memoryPath, path.bottom())
-                    && findFood(nextIndex, memoryPath.cloneInsert(path.bottom()))
+                
+                return isPossiblePath(memoryPath, currentPath.left())
+                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.left()))
+                    || isPossiblePath(memoryPath, currentPath.right())
+                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.right()))
+                    || isPossiblePath(memoryPath, currentPath.top())
+                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.top()))
+                    || isPossiblePath(memoryPath, currentPath.bottom())
+                    && findFood(nextIndex, memoryPath.cloneInsert(currentPath.bottom()))
             }
             else -> false
         }
     }
 
-    override fun speakPassedPath(passedPath: MutableList<CoordinateCounter>) {
+    override fun speakPathTraced(passedPath: MutableList<CoordinateCounter>) {
         println(passedPath.joinToString(" -> "))
         println("Total steps: ${passedPath.last().counter}")
     }
 
     override fun isPossiblePath(memoryPath: MutableList<CoordinateCounter>, path: CoordinateCounter): Boolean {
-        val walkable: (CoordinateCounter) -> Boolean = { map[it.x][it.y] != 1 }
+        val notWall: (CoordinateCounter) -> Boolean = { map[it.x][it.y] != 1 }
         val inBound: (CoordinateCounter) -> Boolean = { it.x >= 0 && it.y >= 0 && it.x < map.size && it.y < map[it.x].size }
         val unique: (CoordinateCounter) -> Boolean = { !memoryPath.contains(it) }
 
-        return inBound(path) && walkable(path) && unique(path)
+        return inBound(path) && notWall(path) && unique(path)
     }
 
     private fun MutableList<CoordinateCounter>.cloneInsert(
